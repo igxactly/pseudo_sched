@@ -1,7 +1,4 @@
-#define _SCHEDULER_H_
-#ifndef _SCHEDULER_H_
+#define _DLIST_H_
+#ifndef _DLIST_H_
 
-
-
-#endif // _SCHEDULER_H_
-
+#endif /* _DLIST_H_ */
