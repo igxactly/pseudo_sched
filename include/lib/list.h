@@ -103,7 +103,6 @@ list_empty(const struct list_head *head)
 static inline int
 list_is_singular(const struct list_head *head)
 {
-
 	if (list_empty(head))
 		return false;
 	if (head->next != head->prev)
