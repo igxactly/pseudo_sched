@@ -5,14 +5,15 @@
 
 struct scheduler {
     unsigned int sched_id;
-    
+
     int (*init)(void);
-    int (*vcpu_register)(void);
-    int (*vcpu_unregister)(void);
-    int (*vcpu_attatch)(void);
-    int (*vcpu_detach)(void);
+    int (*register_vcpu)(void);
+    int (*unregister_vcpu)(void);
+    int (*attatch_vcpu)(void);
+    int (*detach_vcpu)(void);
     int (*do_scheduler)(void);
 };
 
-#endif /* _SCHEDULER_SKELETON_H_ */
+extern const struct sched_rr;
 
+#endif /* _SCHEDULER_SKELETON_H_ */
