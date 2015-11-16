@@ -1,10 +1,12 @@
+
+#include <lib/fakedefs.h>
 #include <lib/dlist.h>
 
 #include <scheduler_skeleton.h>
 #include <scheduler.h>
 
 /**
- * Scheduler related data initialization
+ * Initialize scheduler related data
  *
  * @param
  * @return

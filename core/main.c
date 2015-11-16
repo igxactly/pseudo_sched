@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <lib/fakedefs.h>
 #include <scheduler.h>
 
 int main() {

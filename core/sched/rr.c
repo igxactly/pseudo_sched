@@ -1,8 +1,7 @@
+#include <lib/fakedefs.h>
+
 #include <lib/dlist.h>
 #include <scheduler_skeleton.h>
-
-/* TODO: Declare array or some variables to store information
- * e.g. Global_array named rq_entry_pool_rr */
 
 typedef enum state_rr {
     DETACHED,
@@ -12,6 +11,8 @@ typedef enum state_rr {
 
 struct rq_entry_rr {
     struct list_head head;
+
+    struct list_head reg_head;
     
     /* TODO: set field types to abstract types */
     int vcpuid; //vcpuid_t
@@ -19,6 +20,17 @@ struct rq_entry_rr {
     int tick_reset_val; //tick_t
     enum state_rr state;
 };
+
+/* TODO: Declare array or some variables to store information
+ * e.g. Global_array named rq_entry_pool_rr */
+
+#define MAX_VCPUS 8 /* TODO: Replace this macro with project-wide macro */
+struct list_head rq_rr;
+struct list_head registered_list_rr;
+
+struct rq_entry_rr rq_entry_pool_rr[MAX_VCPUS];
+int pool_front = 0;
+int pool_rear = 0;
 
 /* Function definitions goes here */
 
@@ -35,8 +47,9 @@ int sched_rr_init()
     /* Allocate memory for system-wide data */
 
     /* Initialize data */
-    // call sched_policy.init()
-
+    pool_front = 0;
+    pool_rear = 0;
+    
     return 0;
 }
 
@@ -52,7 +65,13 @@ int sched_rr_init()
  */
 int sched_rr_vcpu_register()
 {
-    /* call scheduler.register_vcpu() */
+    /* Check if vcpu is already registered */
+
+    /* Allocate a rq_entry_rr */
+
+    /* Initialize rq_entry_rr instance */
+
+    /* Add it to registerd list */
 
     return 0; 
 }
@@ -60,13 +79,29 @@ int sched_rr_vcpu_register()
 /**
  * Unregister a vCPU from a scheduler
  *
+ * Better NOT to use vcpu_unregister until \
+ * dynamic allocation is applied
+ *
  * @param shed A scheduler definition
  * @param vcpu A vCPU
  * @return
  */
 int sched_rr_vcpu_unregister()
 {
-    /* call scheduler.unregister_vcpu() */
+    /* Check if vcpu is registered */
+
+    /* Check if vcpu is detached. If not, request detachment.*/
+
+    /* If we have requested detachment of vcpu,
+     *   let's wait until it is detached by main scheduling routine */
+
+    /* Remove it from registered list */
+
+    /* Deallocate rq_entry_rr */
+    /* FIXME: Deallocation will cause problem as  we are using
+     *   array-base pool for now. Dynamic allocation fucntion
+     *   is needed. Better NOT to use vcpu_unregister until
+     *   this problem is fixed*/
 
     return 0; 
 }
@@ -79,7 +114,11 @@ int sched_rr_vcpu_unregister()
  */
 int sched_rr_vcpu_attach()
 {
-    /* call scheduler.attach_vcpu() */
+    /* Check if vcpu is already attached */
+
+    /* Set rq_entry_rr's fields */
+
+    /* Add it to runqueue */
 
     return 0; 
 }
@@ -92,7 +131,11 @@ int sched_rr_vcpu_attach()
  */
 int sched_rr_vcpu_detach()
 {
-    /* call scheduler.detach_vcpu() */
+    /* Check if vcpu is attached */
+
+    /* Remove it from runqueue by setting will_detached flag*/
+
+    /* Set rq_entry_rr's fields */
 
     return 0; 
 }
@@ -105,13 +148,9 @@ int sched_rr_vcpu_detach()
  */
 int sched_rr_do_schedule()
 {
-    /* determine next vcpu to be run 
-     * by calling scheduler.do_schedule() */
+    /* determine next vcpu to be run */
 
-    /* update vCPU's running time */
-
-    /* manipulate variables to
-     * cause context switch */
+    /* update scheduling-related data (like tick) */
 
     return 0; 
 }
