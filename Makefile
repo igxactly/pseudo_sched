@@ -4,6 +4,13 @@ INCLUDES=-I ./include
 LDFLAGS=-lpthread
 CFLAGS=-c -Wall $(INCLUDES)
 
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CFLAGS += -g -ggdb -DDEBUG 
+else
+	CFLAGS += -DNDEBUG
+endif
+	
 BUILD_DIR = ./build
 EXECUTABLE = $(BUILD_DIR)/sched_demo.bin 
 
