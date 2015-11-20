@@ -14,7 +14,7 @@ struct rq_entry_rr {
 
     struct list_head reg_head;
 
-    /* TODO: set field types to abstract types */
+    /* TODO:(igkang) set field types to abstract types */
     int vcpuid; //vcpuid_t
     int tick; //tick_t
     int tick_reset_val; //tick_t
@@ -26,9 +26,9 @@ struct list_head *current = NULL;
 struct list_head rq_rr;
 struct list_head registered_list_rr;
 
-/* TODO: Declare array or some variables to store information
+/* TODO:(igkang) Declare array or some variables to store information
  * e.g. Global_array named rq_entry_pool_rr */
-#define MAX_VCPUS 8 /* TODO: Replace this macro with project-wide macro */
+#define MAX_VCPUS 8 /* TODO:(igkang) Replace this macro with project-wide macro */
 struct rq_entry_rr rq_entry_pool_rr[MAX_VCPUS];
 int pool_front = 0;
 int pool_rear = 0;
@@ -237,11 +237,11 @@ int sched_rr_do_schedule()
 
     /* check pending attach list
      *      then attach them to rq_rr */
-    /* TODO: write code to attach pending attach requests */
+    /* TODO:(igkang) write code to attach pending attach requests */
 
+    /* TODO:(igkang) improve logical code structure to make it more readable */
     /* determine next vcpu to be run
      *  - if there is an detach-pending vcpu than detach it. */
-
     if (current == NULL) { /* No vCPU is running */
         if (!list_empty(&rq_rr)) /* and there are some vcpus waiting */
             will_be_switched = true;
@@ -263,6 +263,7 @@ int sched_rr_do_schedule()
             cur_ent->tick = cur_ent->tick_reset_val;
 
             /* put current entry back to rq_rr */
+            cur_ent->state = WAITING;
             list_add_tail(current, &rq_rr);
             current = NULL;
         }
@@ -278,9 +279,12 @@ int sched_rr_do_schedule()
         next_ent->tick -= 1;
     }
 
-    /* set return next_vcpuid value */
+    /* vcpu of current entry will be the next vcpu */
     if (current != NULL) {
         next_ent = list_entry(current, struct rq_entry_rr, head);
+        next_ent->state = RUNNING;
+
+        /* set return next_vcpuid value */
         next_vcpuid = next_ent->vcpuid;
     }
 
@@ -290,7 +294,7 @@ int sched_rr_do_schedule()
     return next_vcpuid;
 }
 
-/* TODO: assign proper function's address to sched-algo struct */
+/* TODO:(igkang) assign proper function's address to sched-algo struct */
 const struct scheduler sched_rr = {
     .init = sched_rr_init,
     .register_vcpu = sched_rr_vcpu_register,
