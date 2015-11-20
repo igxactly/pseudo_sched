@@ -176,34 +176,34 @@ int sched_rr_vcpu_unregister()
  */
 int sched_rr_vcpu_attach(int vcpuid)
 {
-    struct rq_entry_rr *e = NULL;
-    struct rq_entry_rr *found = NULL;
+    struct rq_entry_rr *entry = NULL;
+    struct rq_entry_rr *registered_entry = NULL;
 
     PRINTH("RR_VCPU_ATTACH\n");
-    /* Check if vcpu is already attached */
-    list_for_each_entry(e, &registered_list_rr, reg_head) {
-        if (e->vcpuid == vcpuid) {
+    /* To find entry in registered entry list */
+    list_for_each_entry(entry, &registered_list_rr, reg_head) {
+        if (entry->vcpuid == vcpuid) {
             PRINTH("Found %d\n", vcpuid);
-            found = e;
+            registered_entry = entry;
             break;
         }
     }
 
-    if (found == NULL) {
-        return -1;
-    }
+    if (registered_entry == NULL)
+        return -1; /* error: not registered */
 
-    else {
-        /* Set rq_entry_rr's fields */
-        found->state = WAITING;
+    if (registered_entry->state != DETACHED)
+        return -2; /* error: already attached */
 
-        /* Add it to runqueue */
-        list_add_tail(&found->head, &rq_rr);
+    /* Set rq_entry_rr's fields */
+    registered_entry->state = WAITING;
 
-        printall_rr();
+    /* Add it to runqueue */
+    list_add_tail(&registered_entry->head, &rq_rr);
 
-        return 0;
-    }
+    printall_rr();
+
+    return 0;
 }
 
 /**
@@ -231,7 +231,7 @@ int sched_rr_vcpu_detach()
  */
 int sched_rr_do_schedule()
 {
-    int change = false;
+    int will_be_switched = false;
     struct rq_entry_rr *next_ent = NULL;
     int next_vcpuid = -1;
 
@@ -242,14 +242,10 @@ int sched_rr_do_schedule()
     /* determine next vcpu to be run
      *  - if there is an detach-pending vcpu than detach it. */
 
-    /* No vCPU is running */
-    if (current == NULL) {
-        if (!list_empty(&rq_rr)) {
-            change = true;
-        }
-    }
-    /* There's a vCPU currently running */
-    else {
+    if (current == NULL) { /* No vCPU is running */
+        if (!list_empty(&rq_rr)) /* and there are some vcpus waiting */
+            will_be_switched = true;
+    } else { /* There's a vCPU currently running */
         struct rq_entry_rr *cur_ent = NULL;
 
         /* check & decrease tick. if tick was <= 0 let's switch */
@@ -261,7 +257,7 @@ int sched_rr_do_schedule()
         }
         /* tick's over */
         else {
-            change = true;
+            will_be_switched = true;
 
             /* reset tick for next scheduling */
             cur_ent->tick = cur_ent->tick_reset_val;
@@ -273,7 +269,7 @@ int sched_rr_do_schedule()
     }
 
     /* update scheduling-related data (like tick) */
-    if (change) {
+    if (will_be_switched) {
         /* move entry from rq_rr to current */
         current = list_first(&rq_rr);
         list_del_init(current);
