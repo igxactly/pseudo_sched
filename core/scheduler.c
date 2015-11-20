@@ -6,7 +6,7 @@
 #include <scheduler.h>
 
 /* TODO: Implement scheduler instance assignment to pCPU
- *  - const struct ptr array, something like 'assigned_sched' 
+ *  - const struct ptr array, something like 'assigned_sched'
  *  - need to be initialized
  *  - need some function like sched_set_policy(pcpu)
  *  - need to make general scheduler functions
@@ -110,7 +110,7 @@ int sched_vcpu_detach()
 int do_schedule()
 {
     int next_vcpuid;
-    
+
     /* get assigned scheduling policy of pCPU? */
 
     /* determine next vcpu to be run
@@ -118,7 +118,7 @@ int do_schedule()
     next_vcpuid = sched_rr.do_schedule();
 
     /* update vCPU's running time */
-    
+
 
     /* manipulate variables to
      * cause context switch */

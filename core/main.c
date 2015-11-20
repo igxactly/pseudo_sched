@@ -8,7 +8,7 @@
 int main() {
     int cnt;
     printf("Hello World!\n");
-        
+
     sched_init();
 
     sched_vcpu_register(0);

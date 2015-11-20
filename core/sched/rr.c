@@ -37,7 +37,7 @@ int pool_rear = 0;
 /* Function definitions goes here */
 /* !! Funtions called by primary functions goes here !! */
 
-struct rq_entry_rr * pool_alloc()
+struct rq_entry_rr *pool_alloc()
 {
     if (pool_rear < MAX_VCPUS)
         return &rq_entry_pool_rr[pool_rear++];
@@ -124,17 +124,18 @@ int sched_rr_vcpu_register(int vcpuid)
     INIT_LIST_HEAD(&newent->reg_head);
     INIT_LIST_HEAD(&newent->head);
 
+    /* FIXME: should use function parameter's value for tick_reset_val init. */
     newent->vcpuid = vcpuid;
-    newent->tick_reset_val = 5; /* FIXME: should use function parameter's value for tick_reset_val init. */
+    newent->tick_reset_val = 5;
     newent->tick = newent->tick_reset_val;
 
-    newent->state = DETACHED; 
+    newent->state = DETACHED;
 
     /* Add it to registerd vcpus list */
     list_add_tail(&newent->reg_head, &registered_list_rr);
 
     printall_rr();
-    return 0; 
+    return 0;
 }
 
 /**
@@ -164,19 +165,19 @@ int sched_rr_vcpu_unregister()
      *   is needed. Better NOT to use vcpu_unregister until
      *   this problem is fixed*/
 
-    return 0; 
+    return 0;
 }
 
 /**
- * 
+ *
  *
  * @param
  * @return
  */
 int sched_rr_vcpu_attach(int vcpuid)
 {
-    struct rq_entry_rr* e = NULL;
-    struct rq_entry_rr* found = NULL;
+    struct rq_entry_rr *e = NULL;
+    struct rq_entry_rr *found = NULL;
 
     PRINTH("RR_VCPU_ATTACH\n");
     /* Check if vcpu is already attached */
@@ -206,7 +207,7 @@ int sched_rr_vcpu_attach(int vcpuid)
 }
 
 /**
- * 
+ *
  *
  * @param
  * @return
@@ -219,7 +220,7 @@ int sched_rr_vcpu_detach()
 
     /* Set rq_entry_rr's fields */
 
-    return 0; 
+    return 0;
 }
 
 /**
@@ -252,7 +253,7 @@ int sched_rr_do_schedule()
         struct rq_entry_rr *cur_ent = NULL;
 
         /* check & decrease tick. if tick was <= 0 let's switch */
-        cur_ent = list_entry(current, struct rq_entry_rr, head); 
+        cur_ent = list_entry(current, struct rq_entry_rr, head);
 
         /* if tick is still left */
         if (cur_ent->tick) {
@@ -270,19 +271,19 @@ int sched_rr_do_schedule()
             current = NULL;
         }
     }
-    
+
     /* update scheduling-related data (like tick) */
     if (change) {
         /* move entry from rq_rr to current */
         current = list_first(&rq_rr);
         list_del_init(current);
-        
+
         next_ent = list_entry(current, struct rq_entry_rr, head);
         next_ent->tick -= 1;
     }
-   
+
     /* set return next_vcpuid value */
-    if (current != NULL) { 
+    if (current != NULL) {
         next_ent = list_entry(current, struct rq_entry_rr, head);
         next_vcpuid = next_ent->vcpuid;
     }
@@ -290,11 +291,11 @@ int sched_rr_do_schedule()
     PRINTH("\n### DO_SCHEDULE_RR\n");
     printall_rr();
 
-    return next_vcpuid; 
+    return next_vcpuid;
 }
 
 /* TODO: assign proper function's address to sched-algo struct */
-const struct scheduler sched_rr ={
+const struct scheduler sched_rr = {
     .init = sched_rr_init,
     .register_vcpu = sched_rr_vcpu_register,
     .unregister_vcpu = sched_rr_vcpu_unregister,

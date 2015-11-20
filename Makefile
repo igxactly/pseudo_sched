@@ -6,13 +6,13 @@ CFLAGS=-c -Wall $(INCLUDES)
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-	CFLAGS += -g -ggdb -DDEBUG 
+	CFLAGS += -g -ggdb -DDEBUG
 else
 	CFLAGS += -DNDEBUG
 endif
-	
+
 BUILD_DIR = ./build
-EXECUTABLE = $(BUILD_DIR)/sched_demo.bin 
+EXECUTABLE = $(BUILD_DIR)/sched_demo.bin
 
 SOURCES = core/main.c core/scheduler.c core/sched/rr.c lib/dlist.c
 OBJECTS = $(SOURCES:.c=.o)
